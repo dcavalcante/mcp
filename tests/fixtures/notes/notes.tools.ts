@@ -21,6 +21,34 @@ export class NotesTools {
     return { count: this.notes.size };
   }
 
+  @Tool({ name: 'string-result', outputSchema: z.string() })
+  stringResult() {
+    return 'paid';
+  }
+
+  @Tool({ name: 'null-result', outputSchema: z.null() })
+  nullResult() {
+    return null;
+  }
+
+  @Tool({ name: 'content-dto', outputSchema: z.object({ content: z.array(z.string()), total: z.number() }) })
+  contentDto() {
+    return { content: [], total: 0 };
+  }
+
+  @Tool({ name: 'formatted-result', outputSchema: z.object({ content: z.array(z.string()), total: z.number() }) })
+  formattedResult() {
+    return {
+      content: [{ type: 'text' as const, text: 'formatted' }],
+      structuredContent: { content: [], total: 0 },
+    };
+  }
+
+  @Tool({ name: 'formatted-error', outputSchema: z.object({ message: z.string() }) })
+  formattedError() {
+    return { content: [{ type: 'text' as const, text: 'failed' }], isError: true };
+  }
+
   @Tool({ description: 'Fails on purpose', inputSchema: z.object({ kind: z.enum(['http', 'unknown']) }) })
   fail({ kind }: { kind: 'http' | 'unknown' }) {
     if (kind === 'http') {

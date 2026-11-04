@@ -1,6 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   McpServer,
+  isCallToolResult,
+  isInputRequiredResult,
   requireScopes,
   ResourceTemplate as SdkResourceTemplate,
   type AuthInfo,
@@ -144,7 +146,8 @@ export class McpServerFactory {
       return toolErrorResult(error);
     }
     try {
-      return toCallToolResult(value, tool.outputSchema !== undefined);
+      const applicationValue = await isApplicationOutput(value, tool.outputSchema);
+      return toCallToolResult(value, tool.outputSchema !== undefined, applicationValue);
     } catch (error) {
       this.logger.error(`${tool.where} returned a value that is not a tool result`, (error as Error)?.stack);
       return { content: [{ type: 'text', text: INTERNAL_ERROR_MESSAGE }], isError: true };
@@ -225,6 +228,23 @@ export class McpServerFactory {
       },
     };
   }
+}
+
+/**
+ * A schema-conforming value that also resembles a CallToolResult is ambiguous. With an output schema, treat it as
+ * application data unless it carries the protocol's explicit structured/error fields. This lets DTOs with a
+ * `content` property survive the SDK's broad result-shape recognition while retaining intentionally formatted MCP
+ * results.
+ */
+async function isApplicationOutput(value: unknown, schema: McpToolEntry['outputSchema']): Promise<boolean> {
+  if (!schema || !isCallToolResult(value) || isInputRequiredResult(value)) {
+    return false;
+  }
+  if (value.isError === true || value.structuredContent !== undefined) {
+    return false;
+  }
+  const validation = await schema['~standard'].validate(value);
+  return validation.issues === undefined;
 }
 
 function scopeChallenge(scopes: string[] | undefined): { scopeChallenge?: ScopeChallengeHandler } {

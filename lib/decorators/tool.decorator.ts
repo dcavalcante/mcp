@@ -7,6 +7,9 @@ import { definePrimitive } from './define-primitive.util.js';
  *
  * It may return a `CallToolResult`, the SDK's `inputRequired()` result, a string (a text result), or any other value:
  * with an `outputSchema` it becomes the `structuredContent` (and a JSON text block), without one a JSON text block.
+ * A returned value that matches the output schema is treated as application data even if its shape also resembles a
+ * tool result. To return an intentionally formatted result alongside an output schema, include `structuredContent`;
+ * an `isError: true` result is also preserved as authored.
  *
  * ```ts
  * @Tool({ description: 'Save a note', inputSchema: z.object({ text: z.string() }) })

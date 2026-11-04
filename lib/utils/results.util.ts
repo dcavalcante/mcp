@@ -9,19 +9,26 @@ import {
 } from '@modelcontextprotocol/server';
 
 /**
- * What a tool method returned, as a `CallToolResult`: a `CallToolResult` or an `inputRequired()` result as is; a
- * string as a text block; nothing as no content; any other value as its JSON text, and also as `structuredContent`
- * when the tool has an output schema.
+ * What a tool method returned, as a `CallToolResult`: an intentional `CallToolResult` or `inputRequired()` result as
+ * is; a string as a text block; nothing as no content; any other value as its JSON text, and also as
+ * `structuredContent` when the tool has an output schema.
  */
-export function toCallToolResult(value: unknown, structured: boolean): CallToolResult | InputRequiredResult {
-  if (isInputRequiredResult(value) || isCallToolResult(value)) {
+export function toCallToolResult(
+  value: unknown,
+  structured: boolean,
+  applicationValue = false,
+): CallToolResult | InputRequiredResult {
+  if (isInputRequiredResult(value) || (isCallToolResult(value) && !applicationValue)) {
     return value;
   }
-  if (value === undefined || value === null) {
+  if (value === undefined || (value === null && !structured)) {
     return { content: [] };
   }
   if (typeof value === 'string') {
-    return { content: [{ type: 'text', text: value }] };
+    return {
+      content: [{ type: 'text', text: value }],
+      ...(structured && { structuredContent: value }),
+    };
   }
   const text = JSON.stringify(value);
   return {
