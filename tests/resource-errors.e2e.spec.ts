@@ -9,6 +9,7 @@ const failures = [
   ['error', 'RESOURCE_SERIALIZATION_FAKE_SECRET'],
   ['http', 'HTTP_SERIALIZATION_FAKE_SECRET'],
   ['protocol', 'PROTOCOL_SERIALIZATION_FAKE_SECRET'],
+  ['stack', 'STACK_GETTER_FAKE_SECRET'],
 ] as const;
 
 describe.each(adapters.map((adapter) => adapter.name))('Resource conversion errors on %s', (adapter) => {

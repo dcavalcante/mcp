@@ -170,10 +170,14 @@ export class McpServerFactory {
     try {
       return toReadResourceResult(value, uri, entry.options.mimeType);
     } catch (error) {
-      this.logger.error(
-        `${entry.where} returned a value that could not be converted to a resource result`,
-        (error as Error)?.stack,
-      );
+      try {
+        this.logger.error(
+          `${entry.where} returned a value that could not be converted to a resource result`,
+          (error as Error)?.stack,
+        );
+      } catch {
+        // A diagnostic failure must not replace the sanitized protocol error.
+      }
       throw new ProtocolError(ProtocolErrorCode.InternalError, INTERNAL_ERROR_MESSAGE);
     }
   }

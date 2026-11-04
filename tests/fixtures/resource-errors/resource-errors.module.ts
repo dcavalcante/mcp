@@ -13,6 +13,15 @@ function throwingSerialization(kind: string): object {
           throw new BadRequestException('HTTP_SERIALIZATION_FAKE_SECRET');
         case 'protocol':
           throw new ProtocolError(-32044, 'PROTOCOL_SERIALIZATION_FAKE_SECRET');
+        case 'stack': {
+          const error = new Error('safe serialization error');
+          Object.defineProperty(error, 'stack', {
+            get() {
+              throw new Error('STACK_GETTER_FAKE_SECRET');
+            },
+          });
+          throw error;
+        }
         default:
           throw new Error(`Unknown serialization failure: ${kind}`);
       }
@@ -50,6 +59,11 @@ class ResourceErrors {
   @Resource({ uri: 'resource-errors://static-protocol' })
   staticProtocol() {
     return failingValue('protocol');
+  }
+
+  @Resource({ uri: 'resource-errors://static-stack' })
+  staticStack() {
+    return failingValue('stack');
   }
 
   @ResourceTemplate({ uriTemplate: 'resource-errors://template/{kind}' })
