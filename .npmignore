@@ -2,7 +2,6 @@
 lib
 tests
 sample
-docs
 package-lock.json
 tsconfig.json
 .prettierrc
