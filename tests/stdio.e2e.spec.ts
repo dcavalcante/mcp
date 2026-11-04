@@ -77,8 +77,11 @@ describe.each(['modern', 'legacy'] as const)('stdio, %s client', (era) => {
 
   it("keeps Nest's logs on stderr, off the protocol channel", async () => {
     await session.client.callTool({ name: 'add', arguments: { a: 1, b: 1 } });
-    expect(session.stderr()).toContain('[LocalTools]');
-    expect(session.stderr()).toContain('adding 1 and 1');
+    // The log travels on stderr, a pipe of its own, so it can arrive after the result on stdout.
+    await vi.waitFor(() => {
+      expect(session.stderr()).toContain('[LocalTools]');
+      expect(session.stderr()).toContain('adding 1 and 1');
+    });
     expect(session.errors).toEqual([]);
   });
 });
