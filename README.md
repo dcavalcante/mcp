@@ -71,7 +71,7 @@ export class AppModule {}
 
 The [sample](sample) is a notes server with a guard and an interceptor, served over HTTP and stdio: `npm run build && npx tsc -p sample/tsconfig.json`, then `node sample/dist/main.js` (HTTP) or `node sample/dist/stdio.js` (stdio).
 
-Read [Overview & Tutorial](https://docs.nestjs.com/mcp/overview) for serving over stdio, authorization, testing with the in-memory client and the module's options.
+Read [Overview & Tutorial](https://docs.nestjs.com/mcp/overview) to get started and for the module's options, [Primitives](https://docs.nestjs.com/mcp/primitives) for tools, resources, prompts, guards and authorization, [Transports](https://docs.nestjs.com/mcp/transports) for the HTTP endpoint and stdio, and [Testing](https://docs.nestjs.com/mcp/testing) for the in-memory client.
 
 ## Support
 
