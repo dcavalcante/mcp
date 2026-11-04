@@ -1,0 +1,26 @@
+# dependencies
+/node_modules
+
+# IDE
+/.idea
+/.awcache
+/.vscode
+
+# misc
+npm-debug.log
+.DS_Store
+
+# tests
+/test
+/coverage
+/.nyc_output
+# the stdio fixture, compiled by tests/support/global-setup.ts
+tests/.tmp/
+
+# dist
+dist
+# packed tarballs
+*.tgz
+
+# Claude Code
+.claude/worktrees/

@@ -1,0 +1,10 @@
+{
+  "extends": "../../../tsconfig.build.json",
+  "compilerOptions": {
+    "rootDir": "../../..",
+    "outDir": "../../.tmp/stdio",
+    "declaration": false
+  },
+  "include": ["./*.ts"],
+  "exclude": []
+}
