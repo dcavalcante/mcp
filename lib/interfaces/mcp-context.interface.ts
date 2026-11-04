@@ -63,6 +63,14 @@ export interface McpAgentContext<TRequest = any, TUser = any> extends McpCallCon
   readonly user?: TUser;
   /** The scopes the agent's caller holds. A tool's `scopes` require them. */
   readonly scopes?: readonly string[];
+  /** The id the model gave this tool call, to tie the tool's logs to the agent's conversation. */
+  readonly toolCallId?: string;
+  /**
+   * In a durable run: the same for every attempt of this call, including the one a process that died mid-call makes
+   * again. Pass it on to what the tool changes (a payment provider's idempotency key), so the change happens once.
+   * `undefined` outside durable runs.
+   */
+  readonly idempotencyKey?: string;
 }
 
 /**

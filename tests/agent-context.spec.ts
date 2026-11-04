@@ -31,6 +31,8 @@ describe('an agent call context', () => {
     request,
     user: { id: 'mia' },
     scopes: ['orders:read'],
+    toolCallId: 'call-1',
+    idempotencyKey: 'run-7:step-3:call-1',
     signal: new AbortController().signal,
     reportProgress: async () => {},
   };
@@ -52,6 +54,10 @@ describe('an agent call context', () => {
     expect(mcp.getSessionId()).toBeUndefined();
     const context = mcp.getContext();
     expect(context.transport === 'agent' && context.user).toEqual({ id: 'mia' });
+    expect(context.transport === 'agent' && [context.toolCallId, context.idempotencyKey]).toEqual([
+      'call-1',
+      'run-7:step-3:call-1',
+    ]);
   });
 
   it('narrows on transport in a method', () => {
