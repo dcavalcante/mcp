@@ -29,6 +29,9 @@ export type {
   ToolOptions,
 } from './interfaces/index.js';
 
+// Where the decorators record themselves, for packages that find them
+export { MCP_PRIMITIVE_METADATA } from './mcp.constants.js';
+
 // Enhancers: the execution context of MCP calls
 export { McpExecutionContext, type McpContextType } from './context/index.js';
 
