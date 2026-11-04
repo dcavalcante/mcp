@@ -18,7 +18,7 @@ export function toCallToolResult(
   structured: boolean,
   applicationValue = false,
 ): CallToolResult | InputRequiredResult {
-  if (isInputRequiredResult(value) || (isCallToolResult(value) && !applicationValue)) {
+  if (isInputRequiredResult(value) || (!applicationValue && isCallToolResult(value))) {
     return value;
   }
   if (value === undefined || (value === null && !structured)) {

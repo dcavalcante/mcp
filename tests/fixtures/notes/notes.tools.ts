@@ -3,6 +3,24 @@ import * as z from 'zod';
 import { Prompt, Resource, ResourceTemplate, Tool, type McpClientContext, type McpContext } from '../../../lib/index.js';
 import { NotesService } from './notes.service.js';
 
+const contentDtoSchema = z.object({ content: z.array(z.string()), total: z.number() });
+
+export const formattedResultOutputSchema = z.union([
+  contentDtoSchema,
+  z.object({
+    content: z.array(z.object({ type: z.literal('text'), text: z.string() })),
+    structuredContent: contentDtoSchema,
+  }),
+]);
+
+export const formattedErrorOutputSchema = z.union([
+  z.object({ message: z.string() }),
+  z.object({
+    content: z.array(z.object({ type: z.literal('text'), text: z.string() })),
+    isError: z.literal(true),
+  }),
+]);
+
 @Injectable()
 export class NotesTools {
   constructor(private readonly notes: NotesService) {}
@@ -36,7 +54,7 @@ export class NotesTools {
     return { content: [], total: 0 };
   }
 
-  @Tool({ name: 'formatted-result', outputSchema: z.object({ content: z.array(z.string()), total: z.number() }) })
+  @Tool({ name: 'formatted-result', outputSchema: formattedResultOutputSchema })
   formattedResult() {
     return {
       content: [{ type: 'text' as const, text: 'formatted' }],
@@ -44,7 +62,7 @@ export class NotesTools {
     };
   }
 
-  @Tool({ name: 'formatted-error', outputSchema: z.object({ message: z.string() }) })
+  @Tool({ name: 'formatted-error', outputSchema: formattedErrorOutputSchema })
   formattedError() {
     return { content: [{ type: 'text' as const, text: 'failed' }], isError: true };
   }
