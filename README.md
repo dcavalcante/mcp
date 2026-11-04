@@ -35,8 +35,6 @@ Zod 4.2 or later; any other [Standard Schema](https://standardschema.dev) librar
 
 ## Quick Start
 
-[Overview & Tutorial](https://docs.nestjs.com/mcp/overview)
-
 Import the module, and decorate the methods of a provider:
 
 ```ts
@@ -71,17 +69,9 @@ export class AppModule {}
 
 `app.listen(3000)` now serves the MCP endpoint at `http://localhost:3000/mcp`, a route like any other (the global prefix and middleware apply to it). Guards, interceptors, pipes and filters run around every call; `McpExecutionContext.create(context)` reads the call in them, as `GqlExecutionContext` does for GraphQL.
 
-Over stdio, for a host that launches the server, serve the same module from an application context, logging to stderr:
+The [sample](sample) is a notes server with a guard and an interceptor, served over HTTP and stdio: `npm run build && npx tsc -p sample/tsconfig.json`, then `node sample/dist/main.js` (HTTP) or `node sample/dist/stdio.js` (stdio).
 
-```ts
-const app = await NestFactory.createApplicationContext(AppModule, { logger: new McpStdioLogger() });
-await app.get(McpStdioServer).listen(); // until the client closes stdin
-await app.close();
-```
-
-In tests, `connectMcpClient(app)` from `@nestjs/mcp/testing` connects an MCP client to the application in memory.
-
-The [sample](sample) is a notes server with a guard and an interceptor, served over both transports: `npm run build && npx tsc -p sample/tsconfig.json`, then `node sample/dist/main.js` (HTTP) or `node sample/dist/stdio.js` (stdio).
+Read [Overview & Tutorial](https://docs.nestjs.com/mcp/overview) for serving over stdio, authorization, testing with the in-memory client and the module's options.
 
 ## Support
 
