@@ -17,7 +17,9 @@ export type {
 // Tools, resources, prompts: decorators on provider methods, and what the methods receive
 export * from './decorators/index.js';
 export type {
+  McpAgentContext,
   McpCallKind,
+  McpClientContext,
   McpContext,
   McpProtocolEra,
   McpSchema,

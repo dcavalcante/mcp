@@ -58,7 +58,8 @@ export class RolesGuard implements CanActivate {
     if (!roles) {
       return true;
     }
-    const role = mcp.getContext().requestInfo?.headers.get('x-role');
+    const call = mcp.getContext();
+    const role = call.transport === 'agent' ? undefined : call.requestInfo?.headers.get('x-role');
     return role !== null && role !== undefined && roles.includes(role);
   }
 }
@@ -147,8 +148,10 @@ export class GlobalFilter implements ExceptionFilter {
 
 /** A custom parameter decorator, as `@CurrentUser()` is one: the `x-role` header of the call. */
 export const CallerRole = createParamDecorator(
-  (_data: unknown, context: ExecutionContext) =>
-    McpExecutionContext.create(context).getContext().requestInfo?.headers.get('x-role') ?? 'guest',
+  (_data: unknown, context: ExecutionContext) => {
+    const call = McpExecutionContext.create(context).getContext();
+    return (call.transport === 'agent' ? undefined : call.requestInfo?.headers.get('x-role')) ?? 'guest';
+  },
 );
 
 @Injectable()
