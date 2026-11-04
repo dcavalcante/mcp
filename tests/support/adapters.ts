@@ -1,11 +1,15 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import type { INestApplication, Type } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test, type TestingModuleBuilder } from '@nestjs/testing';
 
 const require = createRequire(import.meta.url);
-const [major, minor] = (require('@nestjs/core/package.json').version as string).split('.').map(Number);
+// Read next to the entry point: `@nestjs/core` exports `./package.json` only from 12.3 on.
+const corePackageJson = join(dirname(require.resolve('@nestjs/core')), 'package.json');
+const [major, minor] = (JSON.parse(readFileSync(corePackageJson, 'utf8')).version as string).split('.').map(Number);
 
 /** `@nestjs/platform-node` exists from NestJS 12.3 on; CI also runs the suite on 12.0. */
 const hasNodeAdapter = major > 12 || (major === 12 && minor >= 3);
