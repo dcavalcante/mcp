@@ -1,6 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   McpServer,
+  ProtocolError,
+  ProtocolErrorCode,
   requireScopes,
   ResourceTemplate as SdkResourceTemplate,
   type AuthInfo,
@@ -165,7 +167,15 @@ export class McpServerFactory {
     } catch (error) {
       throw toProtocolError(error, uri);
     }
-    return toReadResourceResult(value, uri, entry.options.mimeType);
+    try {
+      return toReadResourceResult(value, uri, entry.options.mimeType);
+    } catch (error) {
+      this.logger.error(
+        `${entry.where} returned a value that could not be converted to a resource result`,
+        (error as Error)?.stack,
+      );
+      throw new ProtocolError(ProtocolErrorCode.InternalError, INTERNAL_ERROR_MESSAGE);
+    }
   }
 
   private async getPrompt(
