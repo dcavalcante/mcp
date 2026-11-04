@@ -9,16 +9,18 @@ import {
 } from '@modelcontextprotocol/server';
 
 /**
- * What a tool method returned, as a `CallToolResult`: an intentional `CallToolResult` or `inputRequired()` result as
- * is; a string as a text block; nothing as no content; any other value as its JSON text, and also as
- * `structuredContent` when the tool has an output schema.
+ * What a tool method returned, as a `CallToolResult`: a `CallToolResult` or an `inputRequired()` result as is; a
+ * string as a text block; nothing as no content; any other value as its JSON text, and also as `structuredContent`
+ * when the tool has an output schema.
+ *
+ * With an output schema, the SDK refuses a result that has neither `structuredContent` nor `isError: true`, so a
+ * value shaped like a `CallToolResult` without them is the tool's data (a DTO with a `content` array), not a result.
  */
-export function toCallToolResult(
-  value: unknown,
-  structured: boolean,
-  applicationValue = false,
-): CallToolResult | InputRequiredResult {
-  if (isInputRequiredResult(value) || (!applicationValue && isCallToolResult(value))) {
+export function toCallToolResult(value: unknown, structured: boolean): CallToolResult | InputRequiredResult {
+  if (isInputRequiredResult(value)) {
+    return value;
+  }
+  if (isCallToolResult(value) && (!structured || value.isError === true || value.structuredContent !== undefined)) {
     return value;
   }
   if (value === undefined || (value === null && !structured)) {
